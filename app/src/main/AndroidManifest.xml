@@ -3,6 +3,10 @@
     package="com.sanilk.securedroid">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.READ_SMS"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -29,7 +33,9 @@
         <service
             android:name=".MainNetworkingService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
+
+        <activity android:name=".LocationActivity"></activity>
     </application>
 
 </manifest>

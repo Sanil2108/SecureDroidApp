@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">SecureDroid</string>
 
+    <!--API key-->
+    <string name="api_key">AIzaSyAI8irZJT45FWZg_I7AJsq6MJhj9A1WcSg</string>
+
     <!-- Notification stuff -->
     <string name="notification_main">Secure Droid is running</string>
     <string name="notification_sub">Your device is secure.</string>
