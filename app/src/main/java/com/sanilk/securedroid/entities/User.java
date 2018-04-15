@@ -1,4 +1,4 @@
-package com.sanilk.securedroid.Entities;
+package com.sanilk.securedroid.entities;
 
 /**
  * Created by sanil on 13/4/18.

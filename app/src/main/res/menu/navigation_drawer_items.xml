@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/nav_bar_home"
+            android:icon="@drawable/ic_home_white_24dp"
+            android:title="Home"></item>
+        <item android:id="@+id/nav_bar_wifi"
+            android:icon="@drawable/ic_wifi_white_24dp"
+            android:title="Wifi"></item>
+        <item android:id="@+id/nav_bar_alarm"
+            android:icon="@drawable/ic_alarm_white_24dp"
+            android:title="Alarm"></item>
+        <item android:id="@+id/nav_bar_location"
+            android:icon="@drawable/ic_my_location_white_24dp"
+            android:title="Location"></item>
+        <item android:id="@+id/nav_bar_settings"
+            android:icon="@drawable/ic_settings_white_24dp"
+            android:title="Settings"></item>
+    </group>
+</menu>

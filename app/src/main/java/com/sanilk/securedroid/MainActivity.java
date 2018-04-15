@@ -7,16 +7,25 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
+import android.widget.FrameLayout;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.sanilk.securedroid.ui_fragments.AlarmFragment;
+import com.sanilk.securedroid.ui_fragments.HomeFragment;
+import com.sanilk.securedroid.ui_fragments.LocationFragment;
+import com.sanilk.securedroid.ui_fragments.SettingsFragment;
+import com.sanilk.securedroid.ui_fragments.WifiFragment;
 
 public class MainActivity extends AppCompatActivity {
     FusedLocationProviderClient fusedLocationProviderClient;
@@ -33,10 +42,55 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        final DrawerLayout drawerLayout=findViewById(R.id.drawerLayout);
+
+        NavigationView navigationView=findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                item.setChecked(true);
+                drawerLayout.closeDrawers();
+
+                FragmentManager fm=getSupportFragmentManager();
+                FragmentTransaction ft=fm.beginTransaction();
+
+                switch (item.getItemId()){
+                    case R.id.nav_bar_home:
+                        HomeFragment homeFragment=new HomeFragment();
+                        ft.replace(R.id.content_frame, homeFragment);
+                        break;
+                    case R.id.nav_bar_alarm:
+                        AlarmFragment alarmFragment=new AlarmFragment();
+                        ft.replace(R.id.content_frame, alarmFragment);
+                        break;
+                    case R.id.nav_bar_location:
+                        LocationFragment locationFragment=new LocationFragment();
+                        ft.replace(R.id.content_frame, locationFragment);
+                        break;
+                    case R.id.nav_bar_wifi:
+                        WifiFragment wifiFragment=new WifiFragment();
+                        ft.replace(R.id.content_frame, wifiFragment);
+                        break;
+                    case R.id.nav_bar_settings:
+                        SettingsFragment settingsFragment=new SettingsFragment();
+                        ft.replace(R.id.content_frame, settingsFragment);
+                        break;
+                }
+
+                ft.commit();
+
+                return true;
+            }
+        });
+
+        //Starting LoginActivity
+//        Intent intent2=new Intent(this, LoginActivity.class);
+//        startActivity(intent2);
 
         final Context context=this;
 
-        setContentView(R.layout.activity_main);
         fusedLocationProviderClient= LocationServices.getFusedLocationProviderClient(this);
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             locationPermissionGranted=false;

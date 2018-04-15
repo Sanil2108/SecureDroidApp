@@ -1,6 +1,5 @@
 package com.sanilk.securedroid;
 
-import android.*;
 import android.Manifest;
 import android.app.Notification;
 import android.app.Service;
@@ -13,7 +12,6 @@ import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -22,7 +20,7 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.sanilk.securedroid.Entities.User;
+import com.sanilk.securedroid.entities.User;
 import com.sanilk.securedroid.networking.requests.SimpleRequestForQueries;
 import com.sanilk.securedroid.networking.requests.UpdateLocationRequest;
 
