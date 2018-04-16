@@ -21,8 +21,11 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.sanilk.securedroid.entities.User;
+import com.sanilk.securedroid.networking.JSONParser;
 import com.sanilk.securedroid.networking.requests.SimpleRequestForQueries;
+import com.sanilk.securedroid.networking.requests.SimpleRequestForQueriesInterface;
 import com.sanilk.securedroid.networking.requests.UpdateLocationRequest;
+import com.sanilk.securedroid.networking.responses.SimpleResponseForQueries;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -30,13 +33,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class MainNetworkingService extends Service {
     private final static int MILLISECONDS=4000;
-//    private final static String URL="10.0.2.2:8080/MainServlet";
-    private final static String URL="http://192.168.1.2:8080/MainServlet";
+//    private final static String URL="http://10.0.2.2:8080/MainServlet";
+    private final static String URL="http://192.168.1.4:8080/MainServlet";
 
-    private final static User TEMP_USER=new User("sanilkhurana7@gmail.com", "root");
+    private final static User TEMP_USER=new User("sanilkhurana8@gmail.com", "root");
 
     private final static String TAG="MAIN_NETWORKING_SERVICE";
 
@@ -66,9 +70,28 @@ public class MainNetworkingService extends Service {
                 try{
                     while(true) {
                         Thread.sleep(MILLISECONDS);
-//                        sendSimpleRequestForQueries();
+//                        showAlarm();
+                        sendSimpleRequestForQueries(new SimpleRequestForQueriesInterface() {
+                            @Override
+                            public void onComplete(SimpleResponseForQueries simpleResponseForQueries) {
+                                if(simpleResponseForQueries==null){
+                                    return;
+                                }
+                                for(SimpleResponseForQueries.Action action:simpleResponseForQueries.getActions()){
+                                    if(action instanceof SimpleResponseForQueries.StartAlarmAction){
+                                        Log.d(TAG, "StartAlarm action to be executed");
+                                        showAlarm();
+                                    }else if(action instanceof SimpleResponseForQueries.MessageAction){
+                                        Log.d(TAG, "Message action to be executed");
+                                        showMessage((SimpleResponseForQueries.MessageAction)action);
+                                    }
+
+                                }
+
+                            }
+                        });
 //                        sendUpdateLocationRequest();
-                        readSMS();
+//                        readSMS();
 
 //                        Intent intent=new Intent(context, AlarmActivity.class);
 //                        startActivity(intent);
@@ -83,7 +106,18 @@ public class MainNetworkingService extends Service {
         return START_NOT_STICKY;
     }
 
-    public void sendSimpleRequestForQueries() throws Exception{
+    public void showAlarm(){
+        Intent intent=new Intent(this, AlarmActivity.class);
+        startActivity(intent);
+    }
+
+    public void showMessage(SimpleResponseForQueries.MessageAction messageAction){
+        Intent intent=new Intent(this, MessageActivity.class);
+        intent.putExtra("messageText", messageAction.getMessageText());
+        startActivity(intent);
+    }
+
+    public void sendSimpleRequestForQueries(SimpleRequestForQueriesInterface simpleRequestForQueriesInterface) throws Exception{
         URL url=new URL(URL);
         HttpURLConnection connection=(HttpURLConnection)url.openConnection();
         connection.setRequestMethod("POST");
@@ -104,6 +138,12 @@ public class MainNetworkingService extends Service {
                 connection.getInputStream()
         );
         String response=dis.readUTF();
+        connection.disconnect();
+
+        JSONParser jsonParser=new JSONParser();
+        SimpleResponseForQueries simpleResponseForQueries=(SimpleResponseForQueries) jsonParser.parse(response);
+        simpleRequestForQueriesInterface.onComplete(simpleResponseForQueries);
+
         Log.d(TAG, response);
     }
 
