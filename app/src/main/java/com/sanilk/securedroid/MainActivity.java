@@ -32,12 +32,18 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int MY_PERMISSIONS_ACCESS_FINE_LOCATION=11;
     private static final int MY_PERMISSIONS_READ_SMS=12;
+    private static final int ALL_PERMISSIONS=13;
 
     boolean locationPermissionGranted=true;
 
     private Location lastKnownLocation;
 
     private static final String TAG="MAIN_ACTIVITY";
+
+    private final String[] PERMISSIONS=new String[]{
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.READ_SMS
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,31 +91,38 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //Starting LoginActivity
-//        Intent intent2=new Intent(this, LoginActivity.class);
-//        startActivity(intent2);
-
-        final Context context=this;
-
-        fusedLocationProviderClient= LocationServices.getFusedLocationProviderClient(this);
-        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            locationPermissionGranted=false;
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    MY_PERMISSIONS_ACCESS_FINE_LOCATION);
-        }
-        if(locationPermissionGranted){
-            Intent intent=new Intent(context, MainNetworkingService.class);
-            startService(intent);
+        if(!checkPermissions()){
+            ActivityCompat.requestPermissions(this, PERMISSIONS, ALL_PERMISSIONS);
         }
 
 
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS)!=PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS},
-                    MY_PERMISSIONS_READ_SMS);
-        }else{
-            Intent intent=new Intent(this, MainNetworkingService.class);
-            startService(intent);
+//        fusedLocationProviderClient= LocationServices.getFusedLocationProviderClient(this);
+//        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            locationPermissionGranted=false;
+//            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+//                    MY_PERMISSIONS_ACCESS_FINE_LOCATION);
+//        }
+//
+//
+//        if(ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS)!=PackageManager.PERMISSION_GRANTED){
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS},
+//                    MY_PERMISSIONS_READ_SMS);
+//        }
+//
+//        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED &&
+//                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS)==PackageManager.PERMISSION_GRANTED){
+//            Intent intent2=new Intent(this, LoginActivity.class);
+//            startActivity(intent2);
+//        }
+    }
+
+    private boolean checkPermissions(){
+        for(String s:PERMISSIONS){
+            if(ContextCompat.checkSelfPermission(this, s)!=PackageManager.PERMISSION_GRANTED){
+                return false;
+            }
         }
+        return true;
     }
 
 
@@ -118,19 +131,32 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode){
             case MY_PERMISSIONS_ACCESS_FINE_LOCATION:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Intent intent=new Intent(this, MainNetworkingService.class);
-                    startService(intent);
+                    if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED &&
+                            ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS)==PackageManager.PERMISSION_GRANTED){
+                        Intent intent2=new Intent(this, LoginActivity.class);
+                        startActivity(intent2);
+                    }
                 } else {
                     finish();
                 }
                 break;
             case MY_PERMISSIONS_READ_SMS:
                 if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
-                    Intent intent=new Intent(this, MainNetworkingService.class);
-                    startService(intent);
+                    if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED &&
+                            ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS)==PackageManager.PERMISSION_GRANTED){
+                        Intent intent2=new Intent(this, LoginActivity.class);
+                        startActivity(intent2);
+                    }
                 }else{
                     finish();
                 }
+                break;
+            case ALL_PERMISSIONS:
+                if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED && grantResults[1]==PackageManager.PERMISSION_GRANTED){
+                    Intent intent=new Intent(this, LoginActivity.class);
+                    startActivity(intent);
+                }
+                break;
         }
     }
 }

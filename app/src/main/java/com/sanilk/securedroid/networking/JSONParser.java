@@ -1,5 +1,8 @@
 package com.sanilk.securedroid.networking;
 
+import com.sanilk.securedroid.networking.responses.CreateUserResponse;
+import com.sanilk.securedroid.networking.responses.IsClientAuthenticResponse;
+import com.sanilk.securedroid.networking.responses.IsEmailTakenResponse;
 import com.sanilk.securedroid.networking.responses.Response;
 import com.sanilk.securedroid.networking.responses.SimpleResponseForQueries;
 
@@ -17,6 +20,12 @@ public class JSONParser {
             switch (jsonObject.getString(Response.RESPONSE_TYPE_KEY)){
                 case SimpleResponseForQueries.RESPONSE_TYPE:
                     return parseSimpleResponseForQueries(jsonObject);
+                case IsEmailTakenResponse.RESPONSE_TYPE:
+                    return parseIsEmailTakenResponse(jsonObject);
+                case CreateUserResponse.RESPONSE_TYPE:
+                    return parseCreateUserResponse(jsonObject);
+                case IsClientAuthenticResponse.RESPONSE_TYPE:
+                    return parseIsClientAuthenticResponse(jsonObject);
                 default:
                     return null;
             }
@@ -24,6 +33,25 @@ public class JSONParser {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private IsClientAuthenticResponse parseIsClientAuthenticResponse(JSONObject jsonObject) throws Exception{
+        IsClientAuthenticResponse isClientAuthenticResponse=new IsClientAuthenticResponse();
+        isClientAuthenticResponse.setSuccessful(jsonObject.getBoolean(IsClientAuthenticResponse.IS_SUCCESSFUL_KEY));
+        return isClientAuthenticResponse;
+    }
+
+    private CreateUserResponse parseCreateUserResponse(JSONObject jsonObject) throws Exception{
+        CreateUserResponse createUserResponse=new CreateUserResponse();
+        createUserResponse.setSuccessful(jsonObject.getBoolean(CreateUserResponse.IS_SUCCESSFUL_KEY));
+        return createUserResponse;
+    }
+
+    private IsEmailTakenResponse parseIsEmailTakenResponse(JSONObject jsonObject) throws Exception{
+        IsEmailTakenResponse isEmailTakenResponse=new IsEmailTakenResponse();
+        isEmailTakenResponse.setEmail(jsonObject.getString(IsEmailTakenResponse.EMAIL_KEY));
+        isEmailTakenResponse.setEmailAvailable(jsonObject.getBoolean(IsEmailTakenResponse.EMAIL_AVAILABLE_KEY));
+        return isEmailTakenResponse;
     }
 
     public SimpleResponseForQueries parseSimpleResponseForQueries(JSONObject jsonObject) throws Exception{

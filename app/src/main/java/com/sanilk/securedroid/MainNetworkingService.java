@@ -37,8 +37,8 @@ import java.util.List;
 
 public class MainNetworkingService extends Service {
     private final static int MILLISECONDS=4000;
-//    private final static String URL="http://10.0.2.2:8080/MainServlet";
-    private final static String URL="http://192.168.1.4:8080/MainServlet";
+//    public final static String URL="http://10.0.2.2:8080/MainServlet";
+    public final static String URL="http://192.168.1.4:8080/MainServlet";
 
     private final static User TEMP_USER=new User("sanilkhurana8@gmail.com", "root");
 
