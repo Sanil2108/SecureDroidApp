@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout android:layout_height="match_parent"
     android:layout_width="match_parent"
+    android:background="@color/colorPrimary"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <LinearLayout
+        android:alpha="0.5"
+        android:layout_centerInParent="true"
+        android:background="#fff"
+        android:layout_width="300dp"
+        android:layout_height="200dp">
+
+    </LinearLayout>
+
     <com.google.android.gms.common.SignInButton
+        android:layout_centerInParent="true"
         android:id="@+id/sign_in_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

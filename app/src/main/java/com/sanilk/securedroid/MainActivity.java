@@ -18,7 +18,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.sanilk.securedroid.ui_fragments.AlarmFragment;
@@ -45,12 +53,38 @@ public class MainActivity extends AppCompatActivity {
             Manifest.permission.READ_SMS
     };
 
+    private String email;
+    private String password;
+
+    Intent intent;
+
+    GoogleApiClient googleApiClient;
+
+    @Override
+    protected void onStart() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        googleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+        googleApiClient.connect();
+        super.onStart();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         final DrawerLayout drawerLayout=findViewById(R.id.drawerLayout);
+
+
+        GoogleSignInAccount googleSignInAccount=getIntent().getParcelableExtra("GOOGLE_ACCOUNT");
+        email=googleSignInAccount.getEmail();
+        password=getIntent().getStringExtra("PASSWORD");
+
+        final Context context=this;
 
         NavigationView navigationView=findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -83,6 +117,17 @@ public class MainActivity extends AppCompatActivity {
                         SettingsFragment settingsFragment=new SettingsFragment();
                         ft.replace(R.id.content_frame, settingsFragment);
                         break;
+                    case R.id.nav_bar_logout:
+                        Auth.GoogleSignInApi.signOut(googleApiClient).setResultCallback(
+                                new ResultCallback<Status>() {
+                                    @Override
+                                    public void onResult(@NonNull Status status) {
+                                        Toast.makeText(context, "Logged out", Toast.LENGTH_SHORT).show();
+                                        stopService(intent);
+                                        finish();
+                                    }
+                                }
+                        );
                 }
 
                 ft.commit();
@@ -93,8 +138,12 @@ public class MainActivity extends AppCompatActivity {
 
         if(!checkPermissions()){
             ActivityCompat.requestPermissions(this, PERMISSIONS, ALL_PERMISSIONS);
+        }else{
+            intent=new Intent(this, MainNetworkingService.class);
+            intent.putExtra("EMAIL", email);
+            intent.putExtra("PASSWORD", password);
+            startService(intent);
         }
-
 
 //        fusedLocationProviderClient= LocationServices.getFusedLocationProviderClient(this);
 //        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -133,8 +182,8 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED &&
                             ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS)==PackageManager.PERMISSION_GRANTED){
-                        Intent intent2=new Intent(this, LoginActivity.class);
-                        startActivity(intent2);
+//                        Intent intent2=new Intent(this, LoginActivity.class);
+//                        startActivity(intent2);
                     }
                 } else {
                     finish();
@@ -144,8 +193,8 @@ public class MainActivity extends AppCompatActivity {
                 if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED){
                     if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED &&
                             ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS)==PackageManager.PERMISSION_GRANTED){
-                        Intent intent2=new Intent(this, LoginActivity.class);
-                        startActivity(intent2);
+//                        Intent intent2=new Intent(this, LoginActivity.class);
+//                        startActivity(intent2);
                     }
                 }else{
                     finish();
@@ -153,8 +202,11 @@ public class MainActivity extends AppCompatActivity {
                 break;
             case ALL_PERMISSIONS:
                 if(grantResults.length>0 && grantResults[0]==PackageManager.PERMISSION_GRANTED && grantResults[1]==PackageManager.PERMISSION_GRANTED){
-                    Intent intent=new Intent(this, LoginActivity.class);
-                    startActivity(intent);
+//                    Intent intent=new Intent(this, LoginActivity.class);
+//                    startActivity(intent);
+                    intent=new Intent(this, MainNetworkingService.class);
+                    intent.putExtra("EMAIL", email);
+                    startService(intent);
                 }
                 break;
         }

@@ -33,19 +33,19 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class MainNetworkingService extends Service {
     private final static int MILLISECONDS=4000;
 //    public final static String URL="http://10.0.2.2:8080/MainServlet";
     public final static String URL="http://192.168.1.4:8080/MainServlet";
 
-    private final static User TEMP_USER=new User("sanilkhurana8@gmail.com", "root");
+    private User userLoggedIn;
 
     private final static String TAG="MAIN_NETWORKING_SERVICE";
 
     //in milliseconds
     private long lastDateSMSChecked=0;
+    private boolean serviceRunning;
 
     public MainNetworkingService() {
 
@@ -53,6 +53,13 @@ public class MainNetworkingService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, final int startId) {
+        userLoggedIn=new User(
+                intent.getStringExtra("EMAIL"),
+                intent.getStringExtra("PASSWORD")
+        );
+
+        serviceRunning=true;
+
         Notification notification=new NotificationCompat.Builder(this)
                 .setContentTitle(getString(R.string.notification_main))
                 .setTicker(getString(R.string.notification_main))
@@ -67,8 +74,12 @@ public class MainNetworkingService extends Service {
         Thread t=new Thread(new Runnable(){
             @Override
             public void run() {
-                try{
-                    while(true) {
+                while(true) {
+                    try{
+                        if(!serviceRunning){
+                            stopSelf();
+                            break;
+                        }
                         Thread.sleep(MILLISECONDS);
 //                        showAlarm();
                         sendSimpleRequestForQueries(new SimpleRequestForQueriesInterface() {
@@ -90,14 +101,15 @@ public class MainNetworkingService extends Service {
 
                             }
                         });
-//                        sendUpdateLocationRequest();
+                        sendUpdateLocationRequest();
 //                        readSMS();
 
 //                        Intent intent=new Intent(context, AlarmActivity.class);
 //                        startActivity(intent);
+                    }catch (Exception e){
+                        e.printStackTrace();
+
                     }
-                }catch (Exception e){
-                    e.printStackTrace();
                 }
             }
         });
@@ -130,7 +142,7 @@ public class MainNetworkingService extends Service {
 
         SimpleRequestForQueries simpleRequestForQueries=
                 new SimpleRequestForQueries();
-        simpleRequestForQueries.setClientEmail(TEMP_USER.getEmail());
+        simpleRequestForQueries.setClientEmail(userLoggedIn.getEmail());
 
         dos.writeUTF(simpleRequestForQueries.getJSONString());
 
@@ -145,6 +157,11 @@ public class MainNetworkingService extends Service {
         simpleRequestForQueriesInterface.onComplete(simpleResponseForQueries);
 
         Log.d(TAG, response);
+    }
+
+    @Override
+    public void onDestroy() {
+        serviceRunning=false;
     }
 
     //SMS Constants
@@ -173,7 +190,7 @@ public class MainNetworkingService extends Service {
                 String body=cursor.getString(cursor.getColumnIndex("body"));
                 String[] arr=body.split(";");
                 if(arr.length==4){
-                    if(arr[0].equals(MESSAGE_TITLE) && arr[1].equals(TEMP_USER.email) && arr[2].equals(TEMP_USER.password)){
+                    if(arr[0].equals(MESSAGE_TITLE) && arr[1].equals(userLoggedIn.email) && arr[2].equals(userLoggedIn.password)){
                         switch (arr[3].toUpperCase()){
                             case WIFI_ON_COMMAND:
                                 WifiManager wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
@@ -226,8 +243,8 @@ public class MainNetworkingService extends Service {
 
                                 UpdateLocationRequest updateLocationRequest =
                                         new UpdateLocationRequest();
-                                updateLocationRequest.setUserName(TEMP_USER.email);
-                                updateLocationRequest.setPassword(TEMP_USER.password);
+                                updateLocationRequest.setUserName(userLoggedIn.email);
+                                updateLocationRequest.setPassword(userLoggedIn.password);
 
                                 UpdateLocationRequest.Location location =
                                         new UpdateLocationRequest.Location();

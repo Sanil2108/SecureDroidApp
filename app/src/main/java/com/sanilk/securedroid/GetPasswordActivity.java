@@ -60,6 +60,7 @@ public class GetPasswordActivity extends AppCompatActivity {
                             if(isClientAuthenticResponse.isSuccessful()) {
                                 Intent intent = new Intent(context, MainActivity.class);
                                 intent.putExtra("GOOGLE_ACCOUNT", googleSignInAccount);
+                                intent.putExtra("PASSWORD", password);
                                 startActivity(intent);
                             }else{
                                 Log.d(TAG, "WRONG EMAIL PASSWORD");
@@ -107,6 +108,6 @@ public class GetPasswordActivity extends AppCompatActivity {
         dis=null;
         connection.disconnect();
 
-        isClientAuthenticRequestInterface.onComplete(isClientAuthenticResponse);
+            isClientAuthenticRequestInterface.onComplete(isClientAuthenticResponse);
     }
 }

@@ -1,17 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout android:layout_height="match_parent" android:layout_width="match_parent"
-    android:orientation="vertical"
+<RelativeLayout android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:background="@color/alarmColor"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <TextView
-        android:text="This alarm was issued by Secure Droid app. "
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:layout_centerInParent="true"
+        xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <Button
-        android:id="@+id/activity_alarm_stop"
-        android:text="Stop alarm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <ImageView
+            android:layout_marginBottom="30dp"
+            android:layout_gravity="center"
+            android:src="@drawable/alarm_big"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
-</LinearLayout>
+        <TextView
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:text="Alarm"
+            android:textColor="#fff"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:textSize="16sp"
+            android:text="Issued by Secure Droid"
+            android:textColor="#fff"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+        <Button
+            android:layout_marginTop="4dp"
+            android:padding="10dp"
+            android:textColor="#fff"
+            android:background="@color/colorPrimaryDark"
+            android:id="@+id/activity_alarm_stop"
+            android:text="Stop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</RelativeLayout>

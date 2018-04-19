@@ -122,8 +122,9 @@ public class LoginActivity extends AppCompatActivity {
         if(account==null){
             Intent signInIntent = client.getSignInIntent();
             startActivityForResult(signInIntent, RC_SIGN_IN);
+        }else {
+            signedIn(account);
         }
-        signedIn(account);
     }
 
     private Context context=this;

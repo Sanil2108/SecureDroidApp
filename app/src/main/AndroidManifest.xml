@@ -33,7 +33,6 @@
 
         <activity android:name=".LocationActivity" />
         <activity android:name=".LoginActivity">
-
              <intent-filter>
              <action android:name="android.intent.action.MAIN"></action>
 
@@ -42,7 +41,8 @@
              </intent-filter>
         </activity>
         <activity android:name=".GetPasswordActivity" />
-        <activity android:name=".MessageActivity" />
+        <activity android:name=".MessageActivity">
+        </activity>
         <activity android:name=".SetPasswordActivity"></activity>
     </application>
 

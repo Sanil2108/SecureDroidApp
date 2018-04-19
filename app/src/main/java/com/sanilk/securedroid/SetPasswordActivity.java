@@ -55,6 +55,8 @@ public class SetPasswordActivity extends AppCompatActivity {
                                     Log.d(TAG, "Complete");
 
                                     Intent intent=new Intent(context, MainActivity.class);
+                                    intent.putExtra("GOOGLE_ACCOUNT", googleSignInAccount);
+                                    intent.putExtra("PASSWORD", password);
                                     startActivity(intent);
                                 }
                             }, email, password);
